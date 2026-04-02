@@ -26,11 +26,12 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 
 ## 【最高原则】Suno-Safe 标签规则
 
-**绝对禁止**在 `SUNO_STYLE_TAGS` 中出现任何歌手、艺人、乐队、个人名字。
+**绝对禁止**在 `SUNO_STYLE_TAGS` 中出现任何歌手、艺人、乐队、个人名字，也不得出现参考歌曲名称（如"东风破"、"Counting Stars"等）。
 违者该轮输出作废，重新生成。
 
 - ❌ `Taylor Swift vocals` / `BTS style` / `Drake beat` / `emotional K-pop like BLACKPINK`
-- ✅ `pop female vocals, emotional, upbeat` / `energetic synth, K-pop influence`
+- ❌ `like 东风破` / `in the style of Counting Stars`
+- ✅ `pop female vocals, emotional, upbeat` / `energetic synth, K-pop influence` / `Chinese classical meets modern pop`
 
 ## 输出格式（JSON Schema）
 
@@ -110,7 +111,8 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 2. `round` / `relevance_level` 字段是否匹配当前轮次
 3. `suno_style_tags.char_count` 是否 ≤ 115
 4. `suno_style_tags.raw_tags` 是否出现歌手/艺人名字（零容忍）
-5. `instrumentation.primary` 是否 ≥ 3 个乐器
-6. `vocal_guidance` 是否含歌手名
+5. `suno_style_tags.raw_tags` 是否出现参考歌曲名称（零容忍）
+6. `instrumentation.primary` 是否 ≥ 3 个乐器
+7. `vocal_guidance` 是否含歌手名
 
 如校验失败，主代理将要求你**重新生成**，你须直接输出修正后的完整 JSON。

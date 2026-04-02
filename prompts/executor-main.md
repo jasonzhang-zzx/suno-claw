@@ -158,11 +158,34 @@ function validate_agent_a(output, expected_round) {
   const lyrics = json.lyrics?.full_text || "";
   if (!lyrics.includes("[Verse]")) errors.push("歌词缺少 [Verse] 标签");
   if (!lyrics.includes("[Chorus]")) errors.push("歌词缺少 [Chorus] 标签");
-  
-  // 4. 无歌手名（正则检测）
+
+  // 4. 中文歌词行数检查：每段 Verse/Chorus ≥ 4 行
+  const verseMatches = lyrics.match(/\[Verse\]([^[]+)/gi) || [];
+  const chorusMatches = lyrics.match(/\[Chorus\]([^[]+)/gi) || [];
+  for (const v of verseMatches) {
+    const lines = v.split(/\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 4) errors.push(`[Verse] 段落行数不足4行：${lines.length}行`);
+  }
+  for (const c of chorusMatches) {
+    const lines = c.split(/\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 4) errors.push(`[Chorus] 段落行数不足4行：${lines.length}行`);
+  }
+
+  // 5. 中文歌词总字数 ≥ 400
+  if (lyrics.length < 400) {
+    errors.push(`歌词总字数不足400字：${lyrics.length}字`);
+  }
+
+  // 6. 歌手名检测
   const ARTIST_PATTERN = /([A-Z][a-z]+ [A-Z][a-z]+|Taylor|BTS|BLACKPINK|Drake|周杰伦|蔡依林|林俊杰)/;
   if (ARTIST_PATTERN.test(lyrics)) {
     errors.push("歌词中出现歌手/艺人名字（违规）");
+  }
+
+  // 7. 参考歌曲名称检测
+  const SONG_NAME_PATTERN = /(东风破|晴天|以父之名|叶惠美|七里香|青花瓷|稻香|告白气球|夜曲|发如雪)/;
+  if (SONG_NAME_PATTERN.test(lyrics)) {
+    errors.push("歌词中出现了参考歌曲名称（违规）：禁止直接提及任何参考曲目的歌名");
   }
   
   return { valid: errors.length === 0, errors };

@@ -111,6 +111,7 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好材料]
 
 ```python
 def validate_agent_a(output_json: dict, expected_round: int) -> tuple[bool, list]:
+    import re
     errors = []
     if "round" not in output_json or output_json["round"] != expected_round:
         errors.append(f"round字段不匹配：期望{expected_round}，实际{output_json.get('round')}")
@@ -121,9 +122,37 @@ def validate_agent_a(output_json: dict, expected_round: int) -> tuple[bool, list
         errors.append("歌词缺少[Verse]标签")
     if "[Chorus]" not in lyrics_text:
         errors.append("歌词缺少[Chorus]标签")
+
+    # 中文歌词行数检查：每段 Verse/Chorus ≥ 4 行
+    import re
+    verse_matches = re.findall(r'\[Verse\]([^[]+)', lyrics_text, re.IGNORECASE)
+    chorus_matches = re.findall(r'\[Chorus\]([^[]+)', lyrics_text, re.IGNORECASE)
+    for v in verse_matches:
+        lines = [l.strip() for l in v.split('\n') if l.strip()]
+        if len(lines) < 4:
+            errors.append(f"[Verse] 段落行数不足4行：{len(lines)}行")
+    for c in chorus_matches:
+        lines = [l.strip() for l in c.split('\n') if l.strip()]
+        if len(lines) < 4:
+            errors.append(f"[Chorus] 段落行数不足4行：{len(lines)}行")
+
+    # 中文歌词总字数 ≥ 400
+    if len(lyrics_text) < 400:
+        errors.append(f"歌词总字数不足400字：{len(lyrics_text)}字")
+
     # 歌手名检测
-    if has_artist_name(lyrics_text):
+    ARTIST_PATTERN = re.compile(
+        r'([A-Z][a-z]+ [A-Z][a-z]+|Taylor|BTS|BLACKPINK|Drake|周杰伦|蔡依林|林俊杰)',
+        re.IGNORECASE
+    )
+    if ARTIST_PATTERN.search(lyrics_text):
         errors.append("歌词中出现歌手/艺人名字")
+
+    # 参考歌曲名称检测
+    SONG_NAME_PATTERN = re.compile(r'(东风破|晴天|以父之名|叶惠美|七里香|青花瓷|稻香|告白气球|夜曲|发如雪)')
+    if SONG_NAME_PATTERN.search(lyrics_text):
+        errors.append("歌词中出现参考歌曲名称（违规）：禁止直接提及任何参考曲目的歌名")
+
     return len(errors) == 0, errors
 
 def validate_agent_b(output_json: dict, expected_round: int) -> tuple[bool, list]:

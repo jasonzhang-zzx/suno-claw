@@ -12,7 +12,7 @@ RELEVANCE_LEVEL = [1.0 / 0.7 / 0.5]
 HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入]
 ```
 
-## ⚠️ 关键定义澄清
+## 关键定义
 
 - **`RELEVANCE_LEVEL`**：表示本轮输出与 `INFO_COLLECTION_TABLE` 的相关性强度
   - 1.0 = 严格围绕信息表，精准还原
@@ -36,7 +36,7 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
   "narrative_pov": "string (叙事视角说明)",
   "structure": {
     "sections": "string（描述本首歌的段落结构，如：intro-verse1-chorus-verse2-chorus-bridge-outro；RELEVANCE_LEVEL 高时可参考代表歌曲结构，低时自由发挥）",
-    "total_chars": "number（歌词总字数估算）"
+    "total_chars": "number（歌词总字数估算，中文歌词应在400-800字）"
   },
   "rhetoric": ["string (修辞手法，2-4种)"],
   "rhyme_scheme": "string (AABB/ABAB/自由韵等)",
@@ -71,10 +71,16 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 ## 格式规则
 
 - 歌词须使用 `[Verse]` / `[Chorus]` 等结构标签标记
-- 每段 Verse ≥ 2 行，每段 Chorus ≥ 2 行
-- **段落结构由你根据创意自行决定**：RELEVANCE_LEVEL 高时可参考代表歌曲结构，RELEVANCE_LEVEL 低时自由发挥（如探索意识流、超现实等非常规结构）
-- 总歌词字数建议 300-600 字
-- **不得出现任何歌手/艺人/乐队名字**
+- **中文歌词（必须遵守）：**
+  - 每段 Verse ≥ 4 行，每段 Chorus ≥ 4 行
+  - 总歌词字数 **400-800 字**（中文单行信息密度低，必须足够长度才能有叙事张力）
+  - 副歌须有完整情感爆发，不少于 4 行
+- **英文歌词：**
+  - 每段 Verse ≥ 2 行，每段 Chorus ≥ 2 行
+  - 总歌词字数 300-600 字
+- **段落结构由你根据创意自行决定**，RELEVANCE_LEVEL 高时可参考代表歌曲结构，低时自由发挥
+- **禁止出现任何参考歌曲名称**（如"东风破"、"晴天"、"以父之名"、"Counting Stars"等）——不得在歌词里直接写这些歌名，也不可以用这些歌名作为歌词的一部分
+- **禁止出现任何歌手/艺人/乐队名字**
 - 输出语言跟随信息表（中文创意输出中文歌词，英文同理）
 
 ## 主代理校验清单
@@ -83,7 +89,7 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 1. JSON 是否可解析
 2. `round` / `relevance_level` 字段是否匹配当前轮次
 3. `lyrics.full_text` 是否含 `[Verse]` + `[Chorus]`
-4. `structure.sections` 是否描述了本轮的段落结构（字数由 Agent 自行把握）
-5. 歌词中是否出现禁用词（歌手名等）
+4. 中文歌词每段 Verse/Chorus 是否 ≥ 4 行，总字数是否 ≥ 400 字
+5. 歌词中是否出现参考歌曲名称（如"东风破"）或歌手名
 
 如校验失败，主代理将要求你**重新生成**，你须直接输出修正后的完整 JSON。
