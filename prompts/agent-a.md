@@ -35,18 +35,13 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
   "theme": "string (歌词核心主题，1-2句话)",
   "narrative_pov": "string (叙事视角说明)",
   "structure": {
-    "intro": "string | null (字数范围)",
-    "verse1": "string (字数范围)",
-    "pre_chorus": "string | null (字数范围)",
-    "chorus": "string (字数范围)",
-    "verse2": "string (字数范围)",
-    "bridge": "string | null (字数范围)",
-    "outro": "string | null (字数范围)"
+    "sections": "string（描述本首歌的段落结构，如：intro-verse1-chorus-verse2-chorus-bridge-outro；RELEVANCE_LEVEL 高时可参考代表歌曲结构，低时自由发挥）",
+    "total_chars": "number（歌词总字数估算）"
   },
   "rhetoric": ["string (修辞手法，2-4种)"],
   "rhyme_scheme": "string (AABB/ABAB/自由韵等)",
   "lyrics": {
-    "full_text": "string (完整歌词，含[Verse]等结构标签)"
+    "full_text": "string (完整歌词，必须含[Verse]和[Chorus]标签，段落组合由你根据创意自行决定)"
   },
   "divergence_notes": "string (200字以内，说明本轮如何在RELEVANCE_LEVEL约束下做了哪些取舍，特别是HISTORY_SIGNAL的参考情况)"
 }
@@ -75,8 +70,9 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 
 ## 格式规则
 
-- 歌词须使用 `[Verse]` / `[Chorus]` / `[Bridge]` 等结构标签标记
+- 歌词须使用 `[Verse]` / `[Chorus]` 等结构标签标记
 - 每段 Verse ≥ 2 行，每段 Chorus ≥ 2 行
+- **段落结构由你根据创意自行决定**：RELEVANCE_LEVEL 高时可参考代表歌曲结构，RELEVANCE_LEVEL 低时自由发挥（如探索意识流、超现实等非常规结构）
 - 总歌词字数建议 300-600 字
 - **不得出现任何歌手/艺人/乐队名字**
 - 输出语言跟随信息表（中文创意输出中文歌词，英文同理）
@@ -87,7 +83,7 @@ HISTORY_SIGNAL = [来自 patterns.log 的偏好参考材料，可选择性融入
 1. JSON 是否可解析
 2. `round` / `relevance_level` 字段是否匹配当前轮次
 3. `lyrics.full_text` 是否含 `[Verse]` + `[Chorus]`
-4. `structure` 中各字段字数是否在合理范围（ Verse 60-150字，Chorus 50-120字）
+4. `structure.sections` 是否描述了本轮的段落结构（字数由 Agent 自行把握）
 5. 歌词中是否出现禁用词（歌手名等）
 
 如校验失败，主代理将要求你**重新生成**，你须直接输出修正后的完整 JSON。

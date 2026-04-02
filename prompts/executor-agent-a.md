@@ -54,18 +54,13 @@ X.X
   "theme": "歌词核心主题，1-2句话",
   "narrative_pov": "叙事视角说明",
   "structure": {
-    "intro": "字数范围（如 '0-20字'）或 null",
-    "verse1": "60-150字范围",
-    "pre_chorus": "字数范围或 null",
-    "chorus": "50-120字范围",
-    "verse2": "60-150字范围",
-    "bridge": "字数范围或 null",
-    "outro": "字数范围或 null"
+    "sections": "string（描述本首歌的段落结构，如：intro-verse1-chorus-verse2-chorus-bridge-outro，或根据RELEVANCE_LEVEL自行决定，不做强制要求）",
+    "total_chars": "number（歌词总字数估算）"
   },
   "rhetoric": ["修辞手法1", "修辞手法2", "修辞手法3"],
   "rhyme_scheme": "韵脚设计说明",
   "lyrics": {
-    "full_text": "完整歌词内容，严格使用[Verse]、[Chorus]等结构标签"
+    "full_text": "完整歌词内容，必须使用[Verse]、[Chorus]等结构标签，具体段落组合由你根据创意自行决定"
   },
   "divergence_notes": "200字以内，说明本轮在RELEVANCE_LEVEL约束下的创意取舍"
 }
@@ -79,10 +74,11 @@ X.X
 2. `relevance_level` 必须是当前值（1.0/0.7/0.5）
 3. `lyrics.full_text` 必须同时包含至少 1 个 `[Verse]` 和 1 个 `[Chorus]`
 4. 每段 `[Verse]` 和 `[Chorus]` 不少于 2 行歌词
-5. 总歌词字数建议 300-600 字
-6. **绝对不得出现任何歌手、艺人、乐队名字**（如 Taylor Swift、周杰伦、BLACKPINK 等）
-7. 输出语言跟随 `INFO_COLLECTION_TABLE`（中文创意输出中文歌词，英文同理）
-8. **只输出 JSON，不要有 Markdown 代码块标记，不要有"以下是输出"等前缀文字**
+5. **歌词段落结构由你根据创意自行决定**，RELEVANCE_LEVEL 高时可直接参考代表歌曲结构，RELEVANCE_LEVEL 低时可自由发挥
+6. 总歌词字数建议 300-600 字
+7. **绝对不得出现任何歌手、艺人、乐队名字**（如 Taylor Swift、周杰伦、BLACKPINK 等）
+8. 输出语言跟随 `INFO_COLLECTION_TABLE`（中文创意输出中文歌词，英文同理）
+9. **只输出 JSON，不要有 Markdown 代码块标记，不要有"以下是输出"等前缀文字**
 
 ---
 
@@ -94,7 +90,7 @@ X.X
 | 缺少 [Chorus] | 校验失败需重做 | 确保每版都有副歌 |
 | 出现歌手名字 | 校验失败需重做 | 只描述风格，不提人名 |
 | round 字段错误 | 校验失败需重做 | 仔细核对当前轮次 |
-| 字数超出合理范围 | 校验失败 | Verse 60-150字，Chorus 50-120字 |
+| 字数超出合理范围（如超过1000字）| 校验失败 | 建议总歌词 300-600 字 |
 
 ---
 

@@ -181,11 +181,7 @@ def validate_agent_a(output_json: dict, expected_round: int) -> tuple[bool, list
     # 歌手名检测
     if has_artist_name(lyrics_text):
         errors.append("歌词中出现歌手/艺人名字（零容忍）")
-    # 结构字数检查
-    for section in ["verse1", "chorus"]:
-        if section in output_json.get("structure", {}):
-            size = output_json["structure"][section]
-            # 简单字数估算（排除null）
+    # structure 为动态字段，不再校验具体段落
     return len(errors) == 0, errors
 ```
 
