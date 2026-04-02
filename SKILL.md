@@ -32,10 +32,8 @@ suno-claw/
 ├── memory-system.md              # 记忆系统设计
 ├── prompts/
 │   ├── collector.md              # 信息收集代理说明
-│   ├── agent-a.md                # 歌词解析代理 Prompt 模板（JSON Schema）
-│   ├── agent-b.md                # 音乐性解析代理 Prompt 模板（JSON Schema）
-│   ├── executor-agent-a.md       # Agent A 子代理执行器（含角色+任务+格式规则）
-│   ├── executor-agent-b.md       # Agent B 子代理执行器（含角色+任务+格式规则）
+│   ├── agent-a.md                # Agent A（歌词）子代理完整 Prompt（含角色+JSON Schema+格式规则）
+│   ├── agent-b.md                # Agent B（音乐性）子代理完整 Prompt（含角色+JSON Schema+格式规则）
 │   ├── executor-main.md          # 主代理执行器（Pipeline 总指挥，含调度逻辑）
 │   ├── packager.md               # Suno 封包代理（JSON Schema + 校验规则）
 │   └── generator.md               # kie.ai API 调用指南
@@ -56,8 +54,8 @@ suno-claw/
     ├── Step 1: 收集 + IS_INSTRUMENTAL 判断
     │       ↓
     ├── Step 2: sessions_spawn 并行调度子代理
-    │       ├─ Agent A (executor-agent-a.md) ──→ JSON 歌词结果
-    │       └─ Agent B (executor-agent-b.md) ──→ JSON 音乐性结果
+    │       ├─ Agent A (agent-a.md) ──→ JSON 歌词结果
+    │       └─ Agent B (agent-b.md) ──→ JSON 音乐性结果
     │           ↓ × 3轮（relevance: 1.0 → 0.7 → 0.5）
     ├── Step 3: 封包（packager）→ Suno Prompt × 3
     │       ↓

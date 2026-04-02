@@ -89,7 +89,7 @@ results = await Promise.all([
 
 ```javascript
 function build_agent_a_prompt({round, relevance, info_table, history_signal}) {
-  // 读取 prompts/executor-agent-a.md 作为基础
+  // 读取 prompts/agent-a.md 作为基础
   // 在末尾追加任务详情：
   return `
 【STEP 2 - AGENT A 任务】
@@ -111,7 +111,7 @@ ${history_signal === "（无历史偏好参考，完全自由探索）"
 }
 
 function build_agent_b_prompt({round, relevance, info_table, history_signal}) {
-  // 读取 prompts/executor-agent-b.md 作为基础
+  // 读取 prompts/agent-b.md 作为基础
   // 在末尾追加任务详情：
   return `
 【STEP 2 - AGENT B 任务】
