@@ -45,7 +45,7 @@ IS_INSTRUMENTAL = boolean（是否为纯音乐模式）
 
 ### 1. style_tags 整合
 - 直接取 `AGENT_B_OUTPUT.suno_style_tags.raw_tags`
-- **校验** `char_count ≤ 115`（kie.ai V4_5+ 的 style 上限虽为1000字符，但设计保持115字符上限）
+- **校验** `char_count ≤ 115`（kie.ai V5 的 style 上限虽为1000字符，但设计保持115字符上限）
 - 不得含歌手/艺人名字
 
 ### 2. lyrics 整合

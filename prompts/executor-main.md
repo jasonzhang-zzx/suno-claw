@@ -268,7 +268,7 @@ function package_suno_prompt({agent_a, agent_b, round, relevance, is_instrumenta
       lyrics,
       title,
       instrumental: is_instrumental,
-      model: "V4_5"  // 默认模型
+      model: "V5"  // 默认模型
     },
     metadata: {
       theme_summary: (agent_a.theme || "").slice(0, 200),

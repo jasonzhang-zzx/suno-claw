@@ -52,7 +52,7 @@ KIEAI_API_KEY=your-key-here   # 从 https://kie.ai/api-key 获取
 | `V5` | superior musical expression | - |
 | `V5_5` | 定制化模型，符合个人口味 | - |
 
-**默认选择：`V4_5`**
+**默认选择：`V5`**
 
 ---
 
@@ -170,7 +170,7 @@ def poll_task(task_id, timeout=300, interval=15):
     raise TimeoutError(f"任务 {task_id} 轮询超时")
 
 
-def generate_and_wait(prompt, instrumental=False, model="V4_5"):
+def generate_and_wait(prompt, instrumental=False, model="V5"):
     """一步到位：生成 + 轮询"""
     task_id = generate(prompt, instrumental, model)
     result = poll_task(task_id)
@@ -215,7 +215,7 @@ payload = {
     "title": "My Song",
     "customMode": True,
     "instrumental": False,
-    "model": "V4_5",
+    "model": "V5",
     "callBackUrl": "https://example.com/callback"
 }
 ```

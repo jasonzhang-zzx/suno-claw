@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 suno_generate.py — kie.ai Suno API 渐进生成脚本
-用法: python suno_generate.py --style_tags "..." --lyrics "..." --title "..." [--instrumental] [--model V4_5]
+用法: python suno_generate.py --style_tags "..." --lyrics "..." --title "..." [--instrumental] [--model V5]
 
 API 文档: https://docs.kie.ai/suno-api/
 """
@@ -25,7 +25,7 @@ HEADERS = {
 
 
 def submit_generate(style_tags: str, lyrics: str, title: str,
-                   model: str = "V4_5", instrumental: bool = False) -> str:
+                   model: str = "V5", instrumental: bool = False) -> str:
     """
     提交 Suno 生成任务，返回 task_id
     POST /api/v1/generate
@@ -37,7 +37,7 @@ def submit_generate(style_tags: str, lyrics: str, title: str,
         "customMode": True,
         "instrumental": instrumental,
         "model": model,
-        "callBackUrl": ""
+        "callBackUrl": "https://example.com/callback"
     }
 
     resp = requests.post(

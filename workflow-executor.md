@@ -458,7 +458,7 @@ API_KEY = os.environ.get("KIEAI_API_KEY")
 BASE = "https://api.kie.ai"
 HEADERS = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
 
-def call_kieai_api(suno_prompt: dict, is_instrumental: bool, model: str = "V4_5") -> dict:
+def call_kieai_api(suno_prompt: dict, is_instrumental: bool, model: str = "V5") -> dict:
     payload = {
         "prompt": suno_prompt["lyrics"] if not is_instrumental else "",
         "style": suno_prompt["style_tags"],
