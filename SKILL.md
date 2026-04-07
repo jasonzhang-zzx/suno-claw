@@ -127,9 +127,11 @@ suno-claw/
 
 ## 环境变量
 
-```
-KIEAI_API_KEY=    # kie.ai API 密钥（https://kie.ai/api-key 获取）
-```
+| 变量 | 必填 | 默认值 | 说明 |
+|------|:----:|--------|------|
+| `KIEAI_API_KEY` | ✅ | — | kie.ai API 密钥（https://kie.ai/api-key 获取） |
+| `VERIFY_SSL` | ❌ | `true` | 设为 `false` 跳过 SSL 验证（仅限本地开发） |
+| `CALLBACK_URL` | ❌ | `https://example.com/callback` | 生成结果回调地址 |
 
 ---
 

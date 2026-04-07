@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
-import os, json, requests, urllib3
-urllib3.disable_warnings()
-API_KEY = os.environ.get("KIEAI_API_KEY", "3429106f44ea713baace08c3b6718b0b")
-task_id = "f2217a69ae0aff5d98bd71a1aaa31733"
+"""
+check_task.py — 查询单个任务状态
+用法: python check_task.py <task_id>
+"""
+import os, sys, json, requests
+
+API_KEY = os.environ.get("KIEAI_API_KEY")
+if not API_KEY:
+    print("错误: 请设置 KIEAI_API_KEY 环境变量", file=sys.stderr)
+    sys.exit(1)
+
+task_id = sys.argv[1] if len(sys.argv) > 1 else None
+if not task_id:
+    print("用法: python check_task.py <task_id>", file=sys.stderr)
+    sys.exit(1)
+
+# SSL验证：生产环境建议设置为 true 或删除此行
+VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
+
 resp = requests.get(
     f"https://api.kie.ai/api/v1/generate/record-info?taskId={task_id}",
     headers={"Authorization": f"Bearer {API_KEY}"},
     timeout=20,
-    verify=False
+    verify=VERIFY_SSL
 )
 data = resp.json()
 print("code:", data.get("code"))

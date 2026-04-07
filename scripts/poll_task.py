@@ -1,20 +1,41 @@
 #!/usr/bin/env python3
-import os, sys, json, time, requests, urllib3
-urllib3.disable_warnings()
+"""
+poll_task.py — 轮询任务直到完成或失败
+用法: python poll_task.py <task_id> [timeout_seconds]
 
-API_KEY = os.environ.get("KIEAI_API_KEY", "3429106f44ea713baace08c3b6718b0b")
+状态流转: PENDING → TEXT_SUCCESS → FIRST_SUCCESS → SUCCESS
+终止状态: SUCCESS / FIRST_SUCCESS / CREATE_TASK_FAILED / GENERATE_AUDIO_FAILED /
+          CALLBACK_EXCEPTION / SENSITIVE_WORD_ERROR
+"""
+import os, sys, json, time, requests
+
+API_KEY = os.environ.get("KIEAI_API_KEY")
+if not API_KEY:
+    print("错误: 请设置 KIEAI_API_KEY 环境变量", file=sys.stderr)
+    sys.exit(1)
+
 BASE_URL = "https://api.kie.ai"
 HEADERS = {"Authorization": f"Bearer {API_KEY}"}
 
-task_id = sys.argv[1] if len(sys.argv) > 1 else "f2217a69ae0aff5d98bd71a1aaa31733"
+task_id = sys.argv[1] if len(sys.argv) > 1 else None
+if not task_id:
+    print("用法: python poll_task.py <task_id> [timeout_seconds]", file=sys.stderr)
+    sys.exit(1)
+
 timeout = int(sys.argv[2]) if len(sys.argv) > 2 else 300
 interval = 15
+
+# SSL验证：生产环境建议设置为 true 或删除此行
+VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
 
 print(f"[轮询开始] task_id={task_id}", file=sys.stderr)
 
 end_time = time.time() + timeout
 while time.time() < end_time:
-    resp = requests.get(f"{BASE_URL}/api/v1/generate/record-info?taskId={task_id}", headers=HEADERS, timeout=20, verify=False)
+    resp = requests.get(
+        f"{BASE_URL}/api/v1/generate/record-info?taskId={task_id}",
+        headers=HEADERS, timeout=20, verify=VERIFY_SSL
+    )
     data = resp.json()
     if data.get("code") != 200:
         print(f"[查询失败] {data}", file=sys.stderr)

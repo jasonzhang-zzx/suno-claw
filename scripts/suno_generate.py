@@ -4,6 +4,11 @@ suno_generate.py — kie.ai Suno API 渐进生成脚本
 用法: python suno_generate.py --style_tags "..." --lyrics "..." --title "..." [--instrumental] [--model V5]
 
 API 文档: https://docs.kie.ai/suno-api/
+
+环境变量:
+  KIEAI_API_KEY  — 必填，kie.ai API 密钥
+  VERIFY_SSL     — 可选，默认 true；设为 false 跳过 SSL 验证（仅限本地开发）
+  CALLBACK_URL   — 可选，回调地址，默认 https://example.com/callback
 """
 
 import os
@@ -12,12 +17,14 @@ import json
 import time
 import argparse
 import requests
-import urllib3
-
-urllib3.disable_warnings()
 
 API_KEY = os.environ.get("KIEAI_API_KEY")
 BASE_URL = "https://api.kie.ai"
+
+# SSL验证：生产环境建议保持 true 或删除此行
+VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
+CALLBACK_URL = os.environ.get("CALLBACK_URL", "https://example.com/callback")
+
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
@@ -30,6 +37,9 @@ def submit_generate(style_tags: str, lyrics: str, title: str,
     提交 Suno 生成任务，返回 task_id
     POST /api/v1/generate
     """
+    if not API_KEY:
+        raise Exception("错误: 请设置 KIEAI_API_KEY 环境变量")
+
     payload = {
         "prompt": lyrics,
         "style": style_tags,
@@ -37,7 +47,7 @@ def submit_generate(style_tags: str, lyrics: str, title: str,
         "customMode": True,
         "instrumental": instrumental,
         "model": model,
-        "callBackUrl": "https://example.com/callback"
+        "callBackUrl": CALLBACK_URL
     }
 
     resp = requests.post(
@@ -45,7 +55,7 @@ def submit_generate(style_tags: str, lyrics: str, title: str,
         headers=HEADERS,
         json=payload,
         timeout=30,
-        verify=False
+        verify=VERIFY_SSL
     )
     data = resp.json()
 
@@ -63,8 +73,11 @@ def check_task(task_id: str) -> dict:
     GET /api/v1/generate/record-info?taskId={task_id}
     返回 data 字段内容，查询失败返回 None
     """
+    if not API_KEY:
+        raise Exception("错误: 请设置 KIEAI_API_KEY 环境变量")
+
     url = f"{BASE_URL}/api/v1/generate/record-info?taskId={task_id}"
-    resp = requests.get(url, headers=HEADERS, timeout=20, verify=False)
+    resp = requests.get(url, headers=HEADERS, timeout=20, verify=VERIFY_SSL)
     data = resp.json()
     if data.get("code") != 200:
         return None
