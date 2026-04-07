@@ -28,7 +28,7 @@ KIEAI_API_KEY=your-key-here   # 从 https://kie.ai/api-key 获取
 | `customMode` | boolean | 必填 | `true`=自定义模式；`false`=Non-custom Mode（**推荐，新用户从这开始**） |
 | `instrumental` | boolean | 必填 | `true`=纯音乐，`false`=有人声 |
 | `model` | string | 必填 | V4 / V4_5 / V4_5PLUS / V5 / V5_5 |
-| `callBackUrl` | string | 必填 | 回调通知 URL（可用 ngrok 或任意可访问 URL） |
+| `callBackUrl` | string | 必填 | 回调通知 URL，默认 `https://example.com/callback`，可通过 `CALLBACK_URL` 环境变量覆盖 |
 
 ### Non-custom Mode vs Custom Mode
 
@@ -106,14 +106,16 @@ SUCCESS（全部音频生成完成） ← 终止状态
 ## Python 调用示例
 
 ```python
-import os, requests, time, json, urllib3
-urllib3.disable_warnings()
+import os, requests, time, json
 
 API_KEY = os.environ.get("KIEAI_API_KEY")
+VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() != "false"
+CALLBACK_URL = os.environ.get("CALLBACK_URL", "https://example.com/callback")
 BASE = "https://api.kie.ai"
+
 s = requests.Session()
 s.headers.update({"Authorization": f"Bearer {API_KEY}"})
-s.verify = False
+s.verify = VERIFY_SSL  # 生产环境建议保持 true
 
 
 def generate(prompt, instrumental=False, model="V4_5", callback_url="https://example.com/callback"):
@@ -269,4 +271,4 @@ def progressive_generate(suno_prompts: list, is_instrumental: bool = False):
 | 查询返回 404 | taskId 不存在或已过期 | 重新提交生成任务 |
 | `SENSITIVE_WORD_ERROR` | 内容含敏感词 | 更换 prompt |
 | `CREATE_TASK_FAILED` | 任务创建失败 | 更换 prompt 或模型 |
-| SSL EOF Error | 代理/防火墙拦截 | 关闭代理 或加 `verify=False` |
+| SSL EOF Error | 代理/防火墙拦截 | 关闭代理；本地开发可设 `VERIFY_SSL=false`，生产环境勿用 |
