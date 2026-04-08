@@ -130,7 +130,6 @@ suno-claw/
 | 变量 | 必填 | 默认值 | 说明 |
 |------|:----:|--------|------|
 | `KIEAI_API_KEY` | ✅ | — | kie.ai API 密钥（https://kie.ai/api-key 获取） |
-| `VERIFY_SSL` | ❌ | `true` | 保持 `true`（生产环境）；本地开发可设为 `false`，**生产环境勿用** |
 | `CALLBACK_URL` | ❌ | 空（不传） | 生成完成后的回调地址；若为空字符串则不传给 API，推荐使用内部可信端点 |
 
 ### CALLBACK_URL 安全建议
