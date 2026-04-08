@@ -7,8 +7,8 @@ API 文档: https://docs.kie.ai/suno-api/
 
 环境变量:
   KIEAI_API_KEY  — 必填，kie.ai API 密钥
-  VERIFY_SSL     — 可选，默认 true；设为 false 跳过 SSL 验证（仅限本地开发）
-  CALLBACK_URL   — 可选，回调地址，默认 https://example.com/callback
+  VERIFY_SSL     — 可选，默认 true；**本地开发可临时设为 false，生产环境必须保持 true**
+  CALLBACK_URL   — 可选，回调地址；空字符串（默认）则不传给 API，使用内部轮询
 """
 
 import os
@@ -21,9 +21,10 @@ import requests
 API_KEY = os.environ.get("KIEAI_API_KEY")
 BASE_URL = "https://api.kie.ai"
 
-# SSL验证：生产环境建议保持 true 或删除此行
+# SSL验证：生产环境必须保持 true；本地开发可临时设为 false
 VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
-CALLBACK_URL = os.environ.get("CALLBACK_URL", "https://example.com/callback")
+# 回调地址：空字符串（默认）则不传给 API，避免默认回调到第三方地址
+CALLBACK_URL = os.environ.get("CALLBACK_URL", "")
 
 HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
@@ -47,8 +48,10 @@ def submit_generate(style_tags: str, lyrics: str, title: str,
         "customMode": True,
         "instrumental": instrumental,
         "model": model,
-        "callBackUrl": CALLBACK_URL
     }
+    # 仅当 CALLBACK_URL 非空时才传递，避免默认回调到第三方地址
+    if CALLBACK_URL:
+        payload["callBackUrl"] = CALLBACK_URL
 
     resp = requests.post(
         f"{BASE_URL}/api/v1/generate",

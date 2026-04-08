@@ -130,8 +130,23 @@ suno-claw/
 | 变量 | 必填 | 默认值 | 说明 |
 |------|:----:|--------|------|
 | `KIEAI_API_KEY` | ✅ | — | kie.ai API 密钥（https://kie.ai/api-key 获取） |
-| `VERIFY_SSL` | ❌ | `true` | 设为 `false` 跳过 SSL 验证（仅限本地开发） |
-| `CALLBACK_URL` | ❌ | `https://example.com/callback` | 生成结果回调地址 |
+| `VERIFY_SSL` | ❌ | `true` | 保持 `true`（生产环境）；本地开发可设为 `false`，**生产环境勿用** |
+| `CALLBACK_URL` | ❌ | 空（不传） | 生成完成后的回调地址；若为空字符串则不传给 API，推荐使用内部可信端点 |
+
+### CALLBACK_URL 安全建议
+
+- **推荐**：使用内部可控的回调服务，或留空（由 kie.ai 轮询）
+- **避免**：设为未知第三方地址，以免生成内容被意外泄露
+- 若部署在公网，可设置一个你信任的端点来接收异步通知
+
+### 记忆文件 Retention
+
+| 文件 | 路径 | 保留策略 |
+|------|------|----------|
+| `history.json` | `memory/history.json` | 最近 50 条交互，超出后自动截断（仅保留最新） |
+| `patterns.log` | `memory/patterns.log` | 聚合偏好模式；单文件上限 1MB，超出后轮转（保留最新） |
+
+> **隐私提示**：以上文件包含你的歌词、风格偏好、生成记录。如需清理，删除对应文件即可。
 
 ---
 

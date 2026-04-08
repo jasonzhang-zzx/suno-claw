@@ -110,26 +110,29 @@ import os, requests, time, json
 
 API_KEY = os.environ.get("KIEAI_API_KEY")
 VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() != "false"
-CALLBACK_URL = os.environ.get("CALLBACK_URL", "https://example.com/callback")
+# CALLBACK_URL: 设为空字符串则不传给 API; 留空则使用内部轮询
+CALLBACK_URL = os.environ.get("CALLBACK_URL", "")
 BASE = "https://api.kie.ai"
 
 s = requests.Session()
 s.headers.update({"Authorization": f"Bearer {API_KEY}"})
-s.verify = VERIFY_SSL  # 生产环境建议保持 true
+s.verify = VERIFY_SSL  # 始终保持 true; 仅本地开发可临时设为 false
 
 
-def generate(prompt, instrumental=False, model="V4_5", callback_url="https://example.com/callback"):
+def generate(prompt, instrumental=False, model="V4_5", callback_url=""):
     """
     Non-custom Mode 生成音乐
     prompt: 音乐描述（英文推荐，instrumental=true 时为音乐风格描述）
+    callback_url: 回调地址；空字符串则不传给 API（推荐，默认用轮询）
     """
     payload = {
         "prompt": prompt,
         "customMode": False,
         "instrumental": instrumental,
         "model": model,
-        "callBackUrl": callback_url
     }
+    if callback_url:
+        payload["callBackUrl"] = callback_url
     resp = s.post(f"{BASE}/api/v1/generate", json=payload, timeout=30)
     data = resp.json()
     if data.get("code") != 200:
@@ -218,7 +221,7 @@ payload = {
     "customMode": True,
     "instrumental": False,
     "model": "V5",
-    "callBackUrl": "https://example.com/callback"
+    # "callBackUrl": "你的回调地址"  # 空字符串或不传则使用内部轮询
 }
 ```
 
@@ -271,4 +274,4 @@ def progressive_generate(suno_prompts: list, is_instrumental: bool = False):
 | 查询返回 404 | taskId 不存在或已过期 | 重新提交生成任务 |
 | `SENSITIVE_WORD_ERROR` | 内容含敏感词 | 更换 prompt |
 | `CREATE_TASK_FAILED` | 任务创建失败 | 更换 prompt 或模型 |
-| SSL EOF Error | 代理/防火墙拦截 | 关闭代理；本地开发可设 `VERIFY_SSL=false`，生产环境勿用 |
+| SSL EOF Error | 代理/防火墙拦截 | 关闭代理；本地开发可临时设 `VERIFY_SSL=false`，**生产环境必须保持 true** |
