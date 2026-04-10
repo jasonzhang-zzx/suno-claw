@@ -5,9 +5,15 @@ suno_generate.py — kie.ai Suno API 渐进生成脚本
 
 API 文档: https://docs.kie.ai/suno-api/
 
-环境变量:
-  KIEAI_API_KEY  — 必填，kie.ai API 密钥
-  CALLBACK_URL   — 可选，回调地址；空字符串（默认）则不传给 API，使用内部轮询
+必需环境变量:
+  KIEAI_API_KEY  — kie.ai API 密钥（从 https://kie.ai/api-key 获取）
+
+可选环境变量:
+  CALLBACK_URL   — 回调地址；空字符串（默认）则不传给 API，使用内部轮询
+
+安全说明:
+  - SSL 验证始终启用，不可禁用
+  - 建议 CALLBACK_URL 使用内部可信端点，或留空使用轮询
 """
 
 import os

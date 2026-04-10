@@ -25,16 +25,13 @@ if not task_id:
 timeout = int(sys.argv[2]) if len(sys.argv) > 2 else 300
 interval = 15
 
-# SSL验证：生产环境建议设置为 true 或删除此行
-VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
-
 print(f"[轮询开始] task_id={task_id}", file=sys.stderr)
 
 end_time = time.time() + timeout
 while time.time() < end_time:
     resp = requests.get(
         f"{BASE_URL}/api/v1/generate/record-info?taskId={task_id}",
-        headers=HEADERS, timeout=20, verify=VERIFY_SSL
+        headers=HEADERS, timeout=20, verify=True
     )
     data = resp.json()
     if data.get("code") != 200:

@@ -15,14 +15,11 @@ if not task_id:
     print("用法: python check_task.py <task_id>", file=sys.stderr)
     sys.exit(1)
 
-# SSL验证：生产环境建议设置为 true 或删除此行
-VERIFY_SSL = os.environ.get("VERIFY_SSL", "true").lower() == "true"
-
 resp = requests.get(
     f"https://api.kie.ai/api/v1/generate/record-info?taskId={task_id}",
     headers={"Authorization": f"Bearer {API_KEY}"},
     timeout=20,
-    verify=VERIFY_SSL
+    verify=True
 )
 data = resp.json()
 print("code:", data.get("code"))
